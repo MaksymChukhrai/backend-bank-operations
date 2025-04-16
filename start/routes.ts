@@ -1,14 +1,14 @@
 // start/routes.ts
-import TransactionsController from '../app/Controllers/Http/TransactionsController'
+import TransactionsController from "../app/Controllers/Http/TransactionsController";
 
 // Создаем объект для маршрутов
 const routes = {
   // Определяем обработчики запросов
   handlers: {
-    '/': async (req: any, res: any) => {
-      res.json({ hello: 'world' });
+    "/": async (req: any, res: any) => {
+      res.json({ hello: "world" });
     },
-    '/transactions': {
+    "/transactions": {
       get: async (req: any, res: any) => {
         const controller = new TransactionsController();
         await controller.index({ response: res });
@@ -28,44 +28,44 @@ const routes = {
                   }
                 }
                 return result;
-              }
+              },
             },
-            response: res
+            response: res,
           });
         } else {
-          res.status(400).json({ error: 'Missing id parameter' });
+          res.status(400).json({ error: "Missing id parameter" });
         }
-      }
-    }
+      },
+    },
   },
 
   // Метод для обработки запросов
   handle(req: any, res: any) {
     const { url, method } = req;
-    if (!url) return res.status(404).json({ error: 'Not found' });
-    
-    const urlParts = url.split('/');
+    if (!url) return res.status(404).json({ error: "Not found" });
+
+    const urlParts = url.split("/");
     const resourceId = urlParts.length > 2 ? urlParts[2] : null;
-    
-    if (url === '/') {
-      return this.handlers['/'](req, res);
+
+    if (url === "/") {
+      return this.handlers["/"](req, res);
     }
-    
-    if (url.startsWith('/transactions')) {
+
+    if (url.startsWith("/transactions")) {
       if (resourceId) {
         req.params = { id: resourceId };
-        if (method === 'PUT') {
-          return this.handlers['/transactions'].put(req, res);
+        if (method === "PUT") {
+          return this.handlers["/transactions"].put(req, res);
         }
       } else {
-        if (method === 'GET') {
-          return this.handlers['/transactions'].get(req, res);
+        if (method === "GET") {
+          return this.handlers["/transactions"].get(req, res);
         }
       }
     }
-    
-    res.status(404).json({ error: 'Not found' });
-  }
+
+    res.status(404).json({ error: "Not found" });
+  },
 };
 
 export default routes;

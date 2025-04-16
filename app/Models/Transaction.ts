@@ -1,27 +1,29 @@
 // app/Models/Transaction.ts
-import { DateTime } from 'luxon'
+import { DateTime } from "luxon";
 
-export type TransactionType = 'income' | 'expense'
+export type TransactionType = "income" | "expense";
 
 export default class Transaction {
-  id: number = 0
-  date: DateTime = DateTime.now()
-  type: TransactionType = 'income'
-  price: number = 0
-  balance_after: number = 0
-  createdAt: DateTime = DateTime.now()
-  updatedAt: DateTime = DateTime.now()
+  id: number = 0;
+  date: DateTime = DateTime.now();
+  type: TransactionType = "income";
+  price: number = 0;
+  balance_after: number = 0;
+  createdAt: DateTime = DateTime.now();
+  updatedAt: DateTime = DateTime.now();
 
   constructor(data: Partial<Transaction> = {}) {
-    Object.assign(this, data)
+    Object.assign(this, data);
   }
 
   static async find(id: number): Promise<Transaction | null> {
-    return null // Заглушка
+    return null; // Заглушка
   }
 
-  static async createMany(data: Partial<Transaction>[]): Promise<Transaction[]> {
-    return data.map(item => new Transaction(item)) // Заглушка
+  static async createMany(
+    data: Partial<Transaction>[]
+  ): Promise<Transaction[]> {
+    return data.map((item) => new Transaction(item)); // Заглушка
   }
 
   static query() {
@@ -29,16 +31,16 @@ export default class Transaction {
       where: () => ({
         orderBy: () => ({
           limit: () => [],
-          first: () => null
-        })
+          first: () => null,
+        }),
       }),
       orderBy: () => ({
-        limit: () => []
-      })
-    }
+        limit: () => [],
+      }),
+    };
   }
 
   async save(): Promise<Transaction> {
-    return this // Заглушка
+    return this; // Заглушка
   }
 }
