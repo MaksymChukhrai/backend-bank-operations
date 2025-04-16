@@ -1,0 +1,30 @@
+{
+  "name": "adonis-project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+
+  "scripts": {
+    "dev": "ts-node index.ts",
+    "build": "tsc",
+    "start": "node build/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@adonisjs/core": "^6.17.2",
+    "@adonisjs/lucid": "^21.6.1",
+    "@adonisjs/redis": "^9.2.0",
+    "luxon": "^3.4.4",
+    "pg": "^8.14.1",
+    "reflect-metadata": "^0.1.13"
+  },
+  "devDependencies": {
+    "@types/luxon": "^3.4.2",
+    "@types/node": "^20.11.30",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.4.2"
+  }
+}
