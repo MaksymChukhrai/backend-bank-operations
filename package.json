@@ -4,11 +4,13 @@
   "description": "",
   "main": "index.js",
   "type": "module",
-"scripts": {
-  "dev": "tsx index.ts",
-  "build": "tsc",
-  "start": "node build/index.js"
-},
+  "scripts": {
+    "dev": "tsx index.ts",
+    "build": "tsc",
+    "start": "node build/index.js",
+    "migrate": "node scripts/migrate.js",
+    "seed": "node scripts/seed.js"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -16,6 +18,9 @@
     "@adonisjs/core": "^6.17.2",
     "@adonisjs/lucid": "^21.6.1",
     "@adonisjs/redis": "^9.2.0",
+    "async-queue": "^0.1.0",
+    "bull": "^4.16.5",
+    "ioredis": "^5.6.1",
     "luxon": "^3.4.4",
     "pg": "^8.14.1",
     "reflect-metadata": "^0.1.13"

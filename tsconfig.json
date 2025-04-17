@@ -11,6 +11,7 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "outDir": "build",
+    "typeRoots": ["./node_modules/@types", "./@types"],
     "rootDir": "./",
     "paths": {
       "#models/*": ["./app/Models/*"],

@@ -56,6 +56,25 @@ async function handleRequest(req: any, res: any) {
       });
     }
     
+    // Получение всех задач
+    if (path === '/jobs' && method === 'GET') {
+      return await transactionsController.getJobs({
+        request: req,
+        response: res
+      });
+    }
+    
+    // Получение статуса конкретной задачи
+    if (path.match(/^\/jobs\/[a-z0-9]+$/) && method === 'GET') {
+      const id = path.split('/')[2];
+      req.params = { id };
+      return await transactionsController.getJobStatus({
+        params: req.params,
+        request: req,
+        response: res
+      });
+    }
+    
     // Если маршрут не найден
     return res.status(404).json({ 
       error: 'Not found' 
