@@ -1,5 +1,5 @@
 // database/seeders/BankAccountSeeder.ts
-import BankAccount from "../../app/Models/BankAccount";
+import BankAccount from "../../app/Models/BankAccount.js";
 
 const bankAccountsSeeder = {
   async run() {

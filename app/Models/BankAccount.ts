@@ -1,46 +1,25 @@
 // app/Models/BankAccount.ts
-import { DateTime } from "luxon";
+import { DateTime } from 'luxon';
+import { BaseModel, column, hasMany } from '@adonisjs/lucid/orm';
+import type { HasMany } from '@adonisjs/lucid/types/relations';
+import Transaction from './Transaction.js';
 
-// Используем тип 'any' временно для обхода проблем с типами
-type BaseLucidModel = any;
-type ColumnDecorator = any;
-let BaseModel: BaseLucidModel;
-let column: ColumnDecorator;
+export default class BankAccount extends BaseModel {
+  @column({ isPrimary: true })
+  declare id: number;
 
-// Асинхронно инициализируем импорты
-async function initImports() {
-  const lucidOrm = await import("@adonisjs/lucid/orm");
-  BaseModel = lucidOrm.BaseModel;
-  column = lucidOrm.column;
-}
+  @column()
+  declare account_name: string;
 
-// Вызываем инициализацию
-initImports().catch(console.error);
+  @column()
+  declare balance: number;
 
-export default class BankAccount {
-  id: number = 0;
-  account_name: string = "";
-  balance: number = 0;
-  createdAt: DateTime = DateTime.now();
-  updatedAt: DateTime = DateTime.now();
+  @hasMany(() => Transaction)
+  declare transactions: HasMany<typeof Transaction>;
 
-  constructor(data: Partial<BankAccount> = {}) {
-    Object.assign(this, data);
-  }
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime;
 
-  static async find(id: number): Promise<BankAccount | null> {
-    return null; // Заглушка
-  }
-
-  static async first(): Promise<BankAccount | null> {
-    return null; // Заглушка
-  }
-
-  static async create(data: Partial<BankAccount>): Promise<BankAccount> {
-    return new BankAccount(data); // Заглушка
-  }
-
-  async save(): Promise<BankAccount> {
-    return this; // Заглушка
-  }
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime;
 }

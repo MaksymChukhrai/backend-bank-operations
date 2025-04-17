@@ -1,46 +1,36 @@
 // app/Models/Transaction.ts
-import { DateTime } from "luxon";
+import { DateTime } from 'luxon';
+import { BaseModel, column, belongsTo } from '@adonisjs/lucid/orm';
+import type { BelongsTo } from '@adonisjs/lucid/types/relations';
+import BankAccount from './BankAccount.js';
 
-export type TransactionType = "income" | "expense";
+export type TransactionType = 'income' | 'expense';
 
-export default class Transaction {
-  id: number = 0;
-  date: DateTime = DateTime.now();
-  type: TransactionType = "income";
-  price: number = 0;
-  balance_after: number = 0;
-  createdAt: DateTime = DateTime.now();
-  updatedAt: DateTime = DateTime.now();
+export default class Transaction extends BaseModel {
+  @column({ isPrimary: true })
+  declare id: number;
 
-  constructor(data: Partial<Transaction> = {}) {
-    Object.assign(this, data);
-  }
+  @column.date()
+  declare date: DateTime;
 
-  static async find(id: number): Promise<Transaction | null> {
-    return null; // Заглушка
-  }
+  @column()
+  declare type: TransactionType;
 
-  static async createMany(
-    data: Partial<Transaction>[]
-  ): Promise<Transaction[]> {
-    return data.map((item) => new Transaction(item)); // Заглушка
-  }
+  @column()
+  declare price: number;
 
-  static query() {
-    return {
-      where: () => ({
-        orderBy: () => ({
-          limit: () => [],
-          first: () => null,
-        }),
-      }),
-      orderBy: () => ({
-        limit: () => [],
-      }),
-    };
-  }
+  @column()
+  declare balance_after: number;
 
-  async save(): Promise<Transaction> {
-    return this; // Заглушка
-  }
+  @column()
+  declare bankAccountId: number;
+
+  @belongsTo(() => BankAccount)
+  declare bankAccount: BelongsTo<typeof BankAccount>;
+
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime;
+
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime;
 }

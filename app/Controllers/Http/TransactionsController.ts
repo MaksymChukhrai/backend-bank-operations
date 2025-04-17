@@ -1,159 +1,133 @@
 // app/Controllers/Http/TransactionsController.ts
-import Transaction from "../../Models/Transaction";
-import { DateTime } from "luxon";
+import Transaction from '../../Models/Transaction.js';
+import RedisService from '../../Services/RedisService.js';
 
-// Создаем тип для запроса
+// Определяем наши собственные типы
 interface HttpRequest {
-  params: {
-    id: string;
-  };
+  input(name: string, defaultValue?: any): any;
   only(fields: string[]): any;
+  params?: any;
+  body?: any;
 }
 
-// Создаем тип для ответа
 interface HttpResponse {
-  status(code: number): {
-    json(data: any): void;
-  };
-  json(data: any): void;
+  ok(data: any): any;
+  notFound(data: any): any;
+  badRequest(data: any): any;
+  json(data: any): any;
+  status(code: number): { json(data: any): any };
+}
+
+interface ControllerContext {
+  request: HttpRequest;
+  response: HttpResponse;
+  params?: any;
 }
 
 export default class TransactionsController {
-  // Создаем хранилище для кеширования
-  private static cache: Record<string, string> = {};
+  /**
+   * Получение списка транзакций с пагинацией
+   */
+  public async index({ request, response }: ControllerContext) {
+    const page = request.input('page', 1);
+    const limit = request.input('limit', 20);
+    
+    // Для демонстрации создаем тестовые данные
+    const transactions = [];
+    for (let i = 1; i <= 10; i++) {
+      transactions.push({
+        id: i,
+        date: new Date().toISOString(),
+        type: i % 2 === 0 ? 'income' : 'expense',
+        price: i * 100,
+        balance_after: i * 100
+      });
+    }
+    
+    return response.ok({
+      data: transactions,
+      meta: {
+        total: 10,
+        per_page: limit,
+        current_page: page,
+        last_page: 1
+      }
+    });
+  }
 
   /**
-   * Получение списка транзакций
+   * Получение одной транзакции по ID
    */
-  public async index({ response }: { response: HttpResponse }) {
-    // Поскольку у нас есть заглушки, имитируем запрос к БД
-    // В реальном приложении здесь был бы настоящий запрос к БД через Adonis Lucid
-    const transactions = [];
-
-    // Создаем несколько тестовых транзакций
-    for (let i = 1; i <= 10; i++) {
-      transactions.push(
-        new Transaction({
-          id: i,
-          date: DateTime.now(), // Используем DateTime из Luxon
-          type: i % 2 === 0 ? "income" : "expense",
-          price: 100 * i,
-          balance_after: i * 100,
-        })
-      );
+  public async show({ params, response }: ControllerContext) {
+    const id = parseInt(params.id);
+    
+    // Для демонстрации создаем тестовую транзакцию
+    if (id > 0 && id <= 10) {
+      const transaction = {
+        id,
+        date: new Date().toISOString(),
+        type: id % 2 === 0 ? 'income' : 'expense',
+        price: id * 100,
+        balance_after: id * 100
+      };
+      
+      return response.ok(transaction);
     }
-
-    return response.json(transactions);
+    
+    return response.notFound({ message: 'Transaction not found' });
   }
 
   /**
    * Обновление транзакции
    */
-  public async update({
-    params,
-    request,
-    response,
-  }: {
-    params: { id: string };
-    request: HttpRequest;
-    response: HttpResponse;
-  }) {
+  public async update({ params, request, response }: ControllerContext) {
     const id = parseInt(params.id);
-
-    // В реальном приложении мы бы запросили транзакцию из БД
-    // Сейчас создаем имитацию
-    const transaction = new Transaction({
-      id,
-      date: DateTime.now(), // Используем DateTime из Luxon
-      type: "income",
-      price: 1000,
-      balance_after: 1000,
-    });
-
-    if (!transaction) {
-      return response.status(404).json({
-        message: "Transaction not found",
+    
+    // Простая валидация входящих данных
+    const data = request.only(['price']);
+    const newPrice = parseFloat(data.price);
+    
+    if (isNaN(newPrice) || newPrice <= 0) {
+      return response.badRequest({ 
+        message: 'Price must be a positive number' 
       });
     }
-
-    const { price } = request.only(["price"]);
-    const newPrice = parseFloat(price);
-    const oldPrice = transaction.price;
-    const priceDifference = newPrice - oldPrice;
-
-    // Обновляем текущую транзакцию
-    transaction.price = newPrice;
-
-    // Изменение баланса зависит от типа транзакции
-    const balanceChange =
-      transaction.type === "income" ? priceDifference : -priceDifference;
-
-    // Имитируем получение предыдущей транзакции
-    const previousTransaction = new Transaction({
-      id: id - 1,
-      date: DateTime.now().minus({ days: 1 }),
-      type: "income",
-      price: 500,
-      balance_after: 500,
-    });
-
-    const previousBalance = previousTransaction
-      ? previousTransaction.balance_after
-      : 0;
-    transaction.balance_after =
-      previousBalance + (transaction.type === "income" ? newPrice : -newPrice);
-
-    // Вместо Redis используем простое кеширование в памяти
-    TransactionsController.cache[`transaction:${transaction.id}:balance`] =
-      transaction.balance_after.toString();
-
-    // Имитируем последующие транзакции
-    const subsequentTransactions = [];
-    for (let i = id + 1; i <= id + 3; i++) {
-      subsequentTransactions.push(
-        new Transaction({
-          id: i,
-          date: DateTime.now().plus({ days: i - id }),
-          type: i % 2 === 0 ? "income" : "expense",
-          price: 100,
-          balance_after: 100 * i,
-        })
-      );
-    }
-
-    // Обновляем все последующие транзакции
-    let currentBalance = transaction.balance_after;
-
-    for (const nextTransaction of subsequentTransactions) {
-      // Проверяем кеш
-      const cachedBalance =
-        TransactionsController.cache[
-          `transaction:${nextTransaction.id}:balance`
-        ];
-
-      if (cachedBalance) {
-        // Если есть кешированный баланс, используем его и добавляем изменение
-        currentBalance = parseFloat(cachedBalance) + balanceChange;
-      } else {
-        // Иначе вычисляем заново
-        currentBalance =
-          currentBalance +
-          (nextTransaction.type === "income"
-            ? nextTransaction.price
-            : -nextTransaction.price);
+    
+    // Для демонстрации создаем тестовую транзакцию
+    if (id > 0 && id <= 10) {
+      const transaction = {
+        id,
+        date: new Date().toISOString(),
+        type: id % 2 === 0 ? 'income' : 'expense',
+        price: newPrice,
+        balance_after: id % 2 === 0 ? id * 100 + newPrice : id * 100 - newPrice
+      };
+      
+      try {
+        // Имитируем обновление в Redis
+        await RedisService.set(`transaction:${id}:balance`, transaction.balance_after.toString());
+        
+        return response.ok({
+          message: 'Transaction updated successfully',
+          transaction
+        });
+      } catch (error) {
+        console.error('Error updating transaction:', error);
+        return response.status(500).json({ 
+          error: 'Error updating transaction' 
+        });
       }
-
-      nextTransaction.balance_after = currentBalance;
-
-      // Обновляем кеш
-      TransactionsController.cache[
-        `transaction:${nextTransaction.id}:balance`
-      ] = currentBalance.toString();
     }
+    
+    return response.notFound({ message: 'Transaction not found' });
+  }
 
-    return response.json({
-      message: "Transaction updated successfully",
-      transaction,
-    });
+  /**
+   * Вспомогательный метод для обновления последующих транзакций
+   * В демонстрационной версии просто возвращает успех
+   */
+  private async updateSubsequentTransactions(transactionId: number, balanceChange: number) {
+    console.log(`Updating transactions after ID ${transactionId} with balance change ${balanceChange}`);
+    return true;
   }
 }

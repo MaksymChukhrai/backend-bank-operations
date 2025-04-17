@@ -1,8 +1,9 @@
+
 {
   "compilerOptions": {
     "target": "ES2022",
-    "module": "Node16",
-    "moduleResolution": "Node16",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "lib": ["ES2022"],
     "skipLibCheck": true,
     "strict": true,
@@ -11,9 +12,10 @@
     "emitDecoratorMetadata": true,
     "outDir": "build",
     "rootDir": "./",
-    "baseUrl": "./",
     "paths": {
-      "#*": ["./*"]
+      "#models/*": ["./app/Models/*"],
+      "#services/*": ["./app/Services/*"],
+      "#validators/*": ["./app/Validators/*"]
     }
   }
 }

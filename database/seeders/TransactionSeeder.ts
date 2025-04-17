@@ -1,7 +1,9 @@
 // database/seeders/TransactionSeeder.ts
-import { DateTime } from "luxon";
-import Transaction, { TransactionType } from "../../app/Models/Transaction";
-import BankAccount from "../../app/Models/BankAccount";
+import { DateTime } from 'luxon';
+import Transaction from '../../app/Models/Transaction.js';
+import BankAccount from '../../app/Models/BankAccount.js';
+
+type TransactionType = 'income' | 'expense';
 
 class TransactionSeeder {
   public async run() {
