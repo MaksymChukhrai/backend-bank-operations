@@ -2,7 +2,7 @@
 
 🇺🇦 [Read in Ukrainian](README.uk.md)
 
-API for banking transactions, created as a test assignment.
+API for working with banking transactions, created as this assignment. The system allows storing transactions, updating them, automatically recalculating account balances, and optimizing the processing of large volumes of operations using caching and a task queue system.
 
 ## Functionality
 
