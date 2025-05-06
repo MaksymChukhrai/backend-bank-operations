@@ -1,110 +1,113 @@
-# API Банківських Транзакцій
+# Banking Transactions API
 
-API для роботи з банківськими транзакціями, створене в рамках тестового завдання.
+🇺🇦 [Read in Ukrainian](README.uk.md)
 
-## Функціональність
+API for banking transactions, created as a test assignment.
 
-- Зберігання та керування банківськими транзакціями
-- Автоматичний перерахунок балансу при зміні транзакцій
-- Кешування для оптимізації продуктивності
+## Functionality
 
-## Технічний стек
+- Storing and managing banking transactions
+- Automatic balance recalculation when transactions change
+- Caching for performance optimization
+
+## Tech Stack
 
 - Node.js / TypeScript
-- PostgreSQL (модель даних)
-- Redis (для кешування)
-- Queue System для фонової обробки даних
+- PostgreSQL (data model)
+- Redis (for caching)
+- Queue System for background data processing
 
-## Доопрацювання проєкту
+## Project Improvements
 
-### Оптимізація продуктивності
+### Performance Optimization
 
-- Система обмежує кількість одночасно виконуваних завдань для запобігання перевантаження сервера
-- Реалізоване кешування для зменшення навантаження на базу даних
-- Використано асинхронну обробку для довготривалих операцій.
+- The system limits the number of simultaneously executed tasks to prevent server overload
+- Implemented caching to reduce database load
+- Used asynchronous processing for long-running operations
 
-### Безпека
+### Security
 
-- Реалізовано валідацію вхідних даних для запобігання помилкам та атакам
-- Додано обробку помилок з відповідними HTTP-статусами
-- Використано типізацію для забезпечення стабільності коду
+- Implemented input data validation to prevent errors and attacks
+- Added error handling with appropriate HTTP statuses
+- Used typing to ensure code stability
 
-### Масштабованість
+### Scalability
 
-- Архітектура проєкту дозволяє легко масштабувати додаткові функції
-- Система черг завдань спроєктована для обробки великих обсягів даних
-- За допомогою Redis можна розподілити навантаження між кількома серверами
+- The project architecture allows for easy scaling of additional features
+- The task queue system is designed to handle large volumes of data
+- Redis can be used to distribute load between multiple servers
 
-## Структура проекту
+## Project Structure
 
 ```
 adonis-project/
-├── app/                           # Основний код додатку
-│   ├── Controllers/               # Контролери для обробки запитів
-│   │   └── Http/                  # HTTP контролери
-│   │       └── TransactionsController.ts # Контролер для транзакцій
-│   ├── Models/                    # Моделі даних
-│   │   ├── BankAccount.ts         # Модель банківського рахунку
-│   │   └── Transaction.ts         # Модель транзакції
-│   └── Services/                  # Сервіси
-│       ├── QueueService.ts        # Сервіс для керування чергами завдань
-│       └── RedisService.ts        # Сервіс для роботи з Redis
+├── app/                           # Main application code
+│   ├── Controllers/               # Controllers for request handling
+│   │   └── Http/                  # HTTP controllers
+│   │       └── TransactionsController.ts # Transactions controller
+│   ├── Models/                    # Data models
+│   │   ├── BankAccount.ts         # Bank account model
+│   │   └── Transaction.ts         # Transaction model
+│   └── Services/                  # Services
+│       ├── QueueService.ts        # Service for task queue management
+│       └── RedisService.ts        # Service for Redis operations
 ├── config/                        # Конфігураційні файли
-│   └── database.ts                # Налаштування бази даних
-├── database/                      # Файли для роботи з базою даних
-│   ├── migrations/                # Міграції бази даних
-│   │   ├── 1_bank_accounts.ts     # Міграція для таблиці bank_accounts
-│   │   └── 2_transactions.ts      # Міграція для таблиці transactions
-│   └── seeders/                   # Сіди для наповнення бази даних
-│       ├── BankAccountSeeder.ts   # Сід для створення банківського рахунку
-│       └── TransactionSeeder.ts   # Сід для створення транзакцій
-├── start/                         # Файли для запуску додатку
-│   └── routes.ts                  # Налаштування маршрутів
-├── .env                           # Файл з змінними середовища
-├── .gitignore                     # Файл для ігнорування у Git
-├── index.ts                       # Головний файл додатку
-├── package.json                   # Залежності проекту
-├── README.md                      # Документація проекту
-└── tsconfig.json                  # Налаштування TypeScript
+│   └── database.ts                # Configuration files
+├── database/                      # Database settings
+│   ├── migrations/                # Database files
+│   │   ├── 1_bank_accounts.ts     # Migration for bank_accounts table
+│   │   └── 2_transactions.ts      # Migration for transactions table
+│   └── seeders/                   # Database seeders
+│       ├── BankAccountSeeder.ts   # Seeder for creating bank accounts
+│       └── TransactionSeeder.ts   # Seeder for creating transactions
+├── start/                         # Application startup files
+│   └── routes.ts                  # Route configuration
+├── .env                           # Environment variables
+├── .gitignore                     # Git ignore file
+├── index.ts                       # Main application file
+├── package.json                   # Project dependencies
+├── README.md                      # Project documentation (English version)
+├── README.uk.md                   # Project documentation (Ukrainian version)
+└── tsconfig.json                  # TypeScript configuration
 ```
 
-## Ключові можливості
+## Key Features
 
-- CRUD операції для транзакцій
-- Автоматичний перерахунок балансу при зміні транзакцій
-- Кешування проміжних результатів у Redis
-- Фоновий перерахунок балансів через систему черг завдань
+- CRUD operations for transactions
+- Automatic balance recalculation when transactions change
+- Caching intermediate results in Redis
+- Background balance recalculation through a task queue system
 
-## API Ендпоінти
+## API Endpoints
 
-- `GET /transactions` — отримання списку транзакцій
-- `GET /transactions/:id` — отримання конкретної транзакції (наприклад, GET /transactions/1)
-- `PUT /transactions/:id` — оновлення транзакції за ID
+- `GET /transactions` — get list of transactions
+- `GET /transactions/:id` — get specific transaction (e.g., GET /transactions/1)
+- `PUT /transactions/:id` — update transaction by ID
 
-## Кешування з використанням Redis (імітація)
+## Caching with Redis (simulated)
 
-* Під час оновлення транзакції зберігаємо баланс у кеш
-* Використовуємо кеш для оптимізації перерахунку балансів
+* When updating a transaction, we store the balance in cache
+* We use cache to optimize balance recalculations
 
-## Система черг завдань
+## Task Queue System
 
-* Фонове опрацювання перерахунку балансів
-* Обмеження на кількість одночасно виконуваних завдань
-* API для отримання статусу завдань:
-     - GET /jobs — отримання списку всіх завдань
-     - GET /jobs/:id — отримання статусу конкретного завдання (наприклад, GET /jobs/m9lem3u8xn3jk)
+* Background processing of balance recalculations
+* Limits on the number of simultaneously executed tasks
+* API for getting task status:
+     - GET /jobs — get a list of all tasks
+     - GET /jobs/:id — get the status of a specific task (e.g., GET /jobs/m9lem3u8xn3jk)
 
-## Структура проєкту за MVC-патерном
+## Project Structure Based on MVC Pattern
 
-- Моделі (спрощені)
-- Контролери для обробки HTTP-запитів
-- Сервіси для відділення бізнес-логіки
+- Models (simplified)
+- Controllers for handling HTTP requests
+- Services for separating business logic
 
-## Встановлення та запуск
+## Installation and Launch
 
-1. Cклонуйте цей репозиторій: `git clone https://github.com/MaksymChukhrai/backend-test-task.git`
-2. Налаштуйте середовище:
-   Створіть файл `.env` та вкажіть необхідні дані для підключення до PostgreSQL та Redis:
+1. Clone this repository: `git clone https://github.com/MaksymChukhrai/backend-test-task.git`
+2. Configure the environment:
+   Create an `.env` file and specify the necessary data for connecting to PostgreSQL and Redis:
 
        ```
        PORT=3333
@@ -122,82 +125,82 @@ adonis-project/
        REDIS_PASSWORD=null
        ```
 
-3. Встановіть залежності: `npm install`
-4. Запустіть міграції та заповнення даними:
+3. Install dependencies: `npm install`
+4. Run migrations and data seeding:
 
    `npm run migrate`
 
    `npm run seed`
 
 
-5. Запустіть сервер: `npm run dev`
-6. Сервер буде доступний за адресою: `http://localhost:3333`
+5. Start the server: `npm run dev`
+6. The server will be available at: `http://localhost:3333`
 
-## Перевірка функціоналу
+## Functionality Testing
 
-Для перевірки роботи API та системи черг виконайте наступні команди в окремому терміналі консолі:
+To test the API and queue system, execute the following commands in a separate terminal console:
 
-**1. Отримання домашньої сторінки:**
+**1. Getting the home page:**
 
 `curl http://localhost:3333`  
 
-*Очікуваний результат: {"message":"Welcome to Bank Transactions API"}*
+*Expected result: {"message":"Welcome to Bank Transactions API"}*
 
-**2. Отримання списку всіх транзакцій:**
+**2. Getting a list of all transactions:**
 
 `curl http://localhost:3333/transactions`
 
-*Очікуваний результат: список із 10 тестових транзакцій*
+*Expected result: a list of 10 test transactions*
 
-**3. Отримання однієї транзакції:**
+**3. Getting a single transaction:**
 
 `curl http://localhost:3333/transactions/1`
 
-*Очікуваний результат: дані про транзакцію з id=1*
+*Expected result: data about the transaction with id=1*
 
-**4. Оновлення транзакції:**
+**4. Updating a transaction:**
 
 `curl -X PUT -H "Content-Type: application/json" -d '{"price":1500}' http://localhost:3333/transactions/1`
 
-*Очікуваний результат: список усіх завдань у системі*
+*Expected result: a list of all tasks in the system*
 
-**6. Перевірка статусу конкретного завдання:**
+**6. Checking the status of a specific task:**
 
-`curl http://localhost:3333/jobs/JOBID` , де замість `JOBID` вставте ідентифікатор завдання з попередньої операції.
+`curl http://localhost:3333/jobs/JOBID` where `JOBID` is replaced with the task identifier from the previous operation.
 
-*Очікуваний результат: статус завдання має змінитися на "completed" і містити результат обчислення*
+*Expected result: the task status should change to "completed" and contain the calculation result*
 
-**7. Перевірка завершення фонового обчислення:**
+**7. Checking background calculation completion:**
 
-Під час тестування спостерігайте за виведенням інформації в консолі сервера. Ви повинні бачити повідомлення про наступне:
+During testing, observe the information output in the server console. You should see messages about:
 
-    7.1. Початок обробки завдання
+    7.1. Task processing start
 
-    7.2. Перерахунок балансів для наступних 5 транзакцій
+    7.2. Balance recalculation for the next 5 transactions
 
-    7.3. Оновлення балансів у Redis
+    7.3. Redis balance updates
 
-    7.4. Успішне завершення завдання
+    7.4. Successful task completion
 
-Ця фонова обробка демонструє, як система може ефективно обробляти великі обсяги транзакцій без блокування основного потоку виконання.
+This background processing demonstrates how the system can efficiently handle large volumes of transactions without blocking the main execution flow.
 
-### Реалізація вимог завдання
+### Implementation of Assignment Requirements
 
-1. ✅ Створено міграції для таблиць transactions та bank_accounts
-2. ✅ Написано сід для генерації 10,000 записів у таблиці transactions
-3. ✅ Реалізовано логіку перерахунку балансів при оновленні транзакцій
-4. ✅ Підключено Redis для кешування проміжних результатів
-5. ✅ Додано систему черг для фонової обробки при великій кількості транзакцій
+1. ✅ Created migrations for transactions and bank_accounts tables
+2. ✅ Written a seed to generate 10,000 records in the transactions table
+3. ✅ Implemented logic for balance recalculation when updating transactions
+4. ✅ Connected Redis for caching intermediate results
+5. ✅ Added a queue system for background processing with a large number of transactions
 
-### Потенційні покращення
+### Potential Improvements
 
-У повноцінному проєкті можна було б додати:
+In a full-scale project, the following could be added:
 
-- Повну інтеграцію з PostgreSQL через Lucid ORM
-- Повну інтеграцію з Redis для кешування
-- Покращену систему аутентифікації та авторизації
-- Модульні та інтеграційні тести
-- Документацію API (Swagger/OpenAPI)
-- Контейнеризацію (Docker) для спрощення розгортання
+- Full integration with PostgreSQL through Lucid ORM
+- Full integration with Redis for caching
+- Improved authentication and authorization system
+- Unit and integration tests
+- API documentation (Swagger/OpenAPI)
+- Containerization (Docker) for simplified deployment
 
-**Автор: [Максим Чухрай](https://www.mchukhrai.com/)**
+**Author: [Maksym Chukhrai](https://www.mchukhrai.com/)**
