@@ -1,5 +1,5 @@
 // app/Services/QueueService.ts
-import AsyncQueue from 'async-queue';
+
 import RedisService from './RedisService.js';
 
 // Объявляем интерфейс для задачи
