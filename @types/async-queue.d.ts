@@ -1,4 +1,3 @@
-// @types/async-queue.d.ts
 declare module 'async-queue' {
     export interface AsyncQueueOptions {
       concurrency?: number;

@@ -1,4 +1,3 @@
-// database/migrations/1_bank_accounts.ts
 const bankAccountsMigration = {
   async up(db: any) {
     await db.schema.createTable("bank_accounts", (table: any) => {

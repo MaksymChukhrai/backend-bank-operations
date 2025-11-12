@@ -1,4 +1,3 @@
-// config/database.ts
 const databaseConfig = {
   connection: process.env.DB_CONNECTION || "pg",
 

@@ -1,8 +1,6 @@
-// app/Services/QueueService.ts
-
 import RedisService from './RedisService.js';
 
-// Объявляем интерфейс для задачи
+// Define the job interface
 export interface Job {
   id: string;
   type: string;
@@ -17,7 +15,7 @@ export interface Job {
 export default class QueueService {
   private static instance: QueueService;
   private jobs: Map<string, Job> = new Map();
-  private concurrency: number = 2; // Количество одновременно выполняемых задач
+  private concurrency: number = 2; // Number of concurrently executed jobs
   private activeJobs: number = 0;
   private jobQueue: Array<() => Promise<void>> = [];
 
@@ -26,7 +24,7 @@ export default class QueueService {
     this.processQueue();
   }
 
-  // Singleton паттерн
+  // Singleton pattern
   public static getInstance(): QueueService {
     if (!QueueService.instance) {
       QueueService.instance = new QueueService();
@@ -34,7 +32,7 @@ export default class QueueService {
     return QueueService.instance;
   }
 
-  // Добавление задачи в очередь
+  // Add a job to the queue
   public async addJob(type: string, data: any): Promise<Job> {
     const job: Job = {
       id: this.generateJobId(),
@@ -45,92 +43,92 @@ export default class QueueService {
       updatedAt: new Date()
     };
     
-    // Сохраняем информацию о задаче
+    // Save job information
     this.jobs.set(job.id, job);
     
-    // Создаем функцию-обработчик для задачи
+    // Create a handler function for the job
     const jobHandler = async (): Promise<void> => {
       try {
-        // Обновляем статус
+        // Update status
         job.status = 'processing';
         job.updatedAt = new Date();
         
         console.log(`Processing job ${job.id} of type ${job.type}`);
         
-        // Выполняем соответствующую операцию в зависимости от типа задачи
+        // Execute the corresponding operation depending on job type
         if (job.type === 'recalculateBalances') {
           job.result = await this.processRecalculateBalances(job.data);
         } else {
           throw new Error(`Unknown job type: ${job.type}`);
         }
         
-        // Обновляем статус после успешного выполнения
+        // Update status after successful completion
         job.status = 'completed';
         job.updatedAt = new Date();
         
         console.log(`Job ${job.id} completed successfully`);
       } catch (error) {
-        // Обрабатываем ошибку
+        // Handle errors
         job.status = 'failed';
         job.error = error instanceof Error ? error.message : String(error);
         job.updatedAt = new Date();
         
         console.error(`Job ${job.id} failed:`, error);
       } finally {
-        // Уменьшаем счетчик активных задач
+        // Decrease the number of active jobs
         this.activeJobs--;
         
-        // Запускаем обработку очереди
+        // Start processing the next job in the queue
         this.processQueue();
       }
     };
     
-    // Добавляем задачу в очередь
+    // Add job to the queue
     this.jobQueue.push(jobHandler);
     
-    // Запускаем обработку очереди
+    // Start processing the queue
     this.processQueue();
     
     return job;
   }
 
-  // Обработка очереди задач
+  // Process the job queue
   private processQueue(): void {
-    // Проверяем, есть ли задачи в очереди и есть ли свободные слоты для выполнения
+    // Check if there are jobs in the queue and available execution slots
     while (this.jobQueue.length > 0 && this.activeJobs < this.concurrency) {
-      // Извлекаем задачу из очереди
+      // Retrieve a job from the queue
       const jobHandler = this.jobQueue.shift();
       
       if (jobHandler) {
-        // Увеличиваем счетчик активных задач
+        // Increase the number of active jobs
         this.activeJobs++;
         
-        // Запускаем задачу
+        // Execute the job
         jobHandler().catch(error => {
           console.error('Error executing job:', error);
-          this.activeJobs--; // Уменьшаем счетчик активных задач в случае ошибки
-          this.processQueue(); // Запускаем обработку очереди
+          this.activeJobs--; // Decrease the number of active jobs in case of error
+          this.processQueue(); // Continue processing the queue
         });
       }
     }
   }
 
-  // Получение информации о задаче
+  // Get information about a job
   public getJob(jobId: string): Job | undefined {
     return this.jobs.get(jobId);
   }
 
-  // Получение всех задач
+  // Get all jobs
   public getAllJobs(): Job[] {
     return Array.from(this.jobs.values());
   }
 
-  // Генерация уникального ID для задачи
+  // Generate a unique job ID
   private generateJobId(): string {
     return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
   }
 
-  // Обработка задачи пересчета балансов
+  // Process a balance recalculation job
   private async processRecalculateBalances(data: { 
     transactionId: number, 
     balanceChange: number 
@@ -139,21 +137,21 @@ export default class QueueService {
     
     console.log(`Recalculating balances after transaction ${transactionId} with change ${balanceChange}`);
     
-    // Имитация долгой операции (в реальном приложении здесь был бы код для работы с БД)
+    // Simulate a long operation (in a real app, this would interact with a DB)
     await new Promise(resolve => setTimeout(resolve, 2000));
     
-    // В реальном приложении здесь бы выполнялся запрос к БД для получения всех транзакций
-    // после указанной и пересчета их балансов
-    const updatedCount = Math.floor(Math.random() * 100); // Имитация количества обновленных записей
+    // In a real app, this would query the DB for all transactions
+    // after the specified one and recalculate their balances
+    const updatedCount = Math.floor(Math.random() * 100); // Simulate the number of updated records
     
     for (let i = 1; i <= 5; i++) {
       const nextTransactionId = transactionId + i;
       
-      // Имитация получения и обновления данных каждой транзакции
+      // Simulate fetching and updating each transaction
       const cachedBalance = await RedisService.get(`transaction:${nextTransactionId}:balance`);
       const newBalance = cachedBalance ? parseFloat(cachedBalance) + balanceChange : balanceChange * i;
       
-      // Сохранение обновленного баланса в Redis
+      // Save the updated balance in Redis
       await RedisService.set(`transaction:${nextTransactionId}:balance`, newBalance.toString());
       
       console.log(`Updated balance for transaction ${nextTransactionId}: ${newBalance}`);

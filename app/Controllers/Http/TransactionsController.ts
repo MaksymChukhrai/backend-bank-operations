@@ -1,8 +1,7 @@
-// app/Controllers/Http/TransactionsController.ts
 import RedisService from '../../Services/RedisService.js';
 import QueueService from '../../Services/QueueService.js';
 
-// Определяем наши собственные типы
+// Define our own types
 interface HttpRequest {
   input(name: string, defaultValue?: any): any;
   only(fields: string[]): any;
@@ -26,13 +25,13 @@ interface ControllerContext {
 
 export default class TransactionsController {
   /**
-   * Получение списка транзакций с пагинацией
+    * Get a list of transactions with pagination
    */
   public async index({ request, response }: ControllerContext) {
     const page = request.input('page', 1);
     const limit = request.input('limit', 20);
     
-    // Для демонстрации создаем тестовые данные
+      // Create test data for demonstration purposes
     const transactions = [];
     for (let i = 1; i <= 10; i++) {
       transactions.push({
@@ -56,12 +55,12 @@ export default class TransactionsController {
   }
 
   /**
-   * Получение одной транзакции по ID
+  * Get a single transaction by ID
    */
   public async show({ params, response }: ControllerContext) {
     const id = parseInt(params.id);
     
-    // Для демонстрации создаем тестовую транзакцию
+    // Create a test transaction for demonstration purposes
     if (id > 0 && id <= 10) {
       const transaction = {
         id,
@@ -78,7 +77,7 @@ export default class TransactionsController {
   }
 
   /**
-   * Получение статуса всех задач
+    * Get the status of all tasks
    */
   public async getJobs({ response }: ControllerContext) {
     const queueService = QueueService.getInstance();
@@ -88,7 +87,7 @@ export default class TransactionsController {
   }
 
   /**
-   * Получение статуса конкретной задачи
+    * Get the status of a specific task
    */
   public async getJobStatus({ params, response }: ControllerContext) {
     const jobId = params.id;
@@ -103,12 +102,12 @@ export default class TransactionsController {
   }
 
   /**
-   * Обновление транзакции
+    * Update a transaction
    */
   public async update({ params, request, response }: ControllerContext) {
     const id = parseInt(params.id);
     
-    // Простая валидация входящих данных
+       // Simple validation of incoming data
     const data = request.only(['price']);
     const newPrice = parseFloat(data.price);
     
@@ -118,15 +117,15 @@ export default class TransactionsController {
       });
     }
     
-    // Для демонстрации создаем тестовую транзакцию
+    // Create a test transaction for demonstration purposes
     if (id > 0 && id <= 10) {
       try {
-        // Имитируем обновление транзакции
-        const oldPrice = id * 100;  // Имитация текущей цены
+       // Simulate transaction update
+        const oldPrice = id * 100;  // Simulating the current price
         const priceDifference = newPrice - oldPrice;
         const balanceChange = id % 2 === 0 ? priceDifference : -priceDifference;
         
-        // Обновляем текущую транзакцию
+        // Updating the current transaction
         const transaction = {
           id,
           date: new Date().toISOString(),
@@ -135,10 +134,10 @@ export default class TransactionsController {
           balance_after: id % 2 === 0 ? id * 100 + priceDifference : id * 100 - priceDifference
         };
         
-        // Сохраняем в Redis
+        // Saving to Redis
         await RedisService.set(`transaction:${id}:balance`, transaction.balance_after.toString());
         
-        // Создаем задачу для пересчета последующих транзакций в фоновом режиме
+        // Creating a task to recalculate subsequent transactions in the background
         const queueService = QueueService.getInstance();
         const job = await queueService.addJob('recalculateBalances', {
           transactionId: id,
@@ -148,7 +147,7 @@ export default class TransactionsController {
         return response.ok({
           message: 'Transaction updated successfully',
           transaction,
-          jobId: job.id  // Возвращаем ID задачи для проверки статуса
+          jobId: job.id  
         });
       } catch (error) {
         console.error('Error updating transaction:', error);

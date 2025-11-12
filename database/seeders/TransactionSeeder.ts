@@ -1,4 +1,3 @@
-// database/seeders/TransactionSeeder.ts
 import { DateTime } from 'luxon';
 import Transaction from '../../app/Models/Transaction.js';
 import BankAccount from '../../app/Models/BankAccount.js';

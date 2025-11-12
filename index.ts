@@ -1,32 +1,31 @@
-// index.ts
 import http from 'node:http';
 import url from 'node:url';
 import TransactionsController from './app/Controllers/Http/TransactionsController.js';
 
-// Создаем экземпляр контроллера
+// Create a controller instance
 const transactionsController = new TransactionsController();
 
-// Настройка порта
+// Port configuration
 const PORT = process.env.PORT || 3333;
 
-// Маршрутизация запросов
+// Request routing
 async function handleRequest(req: any, res: any) {
   try {
-    // Парсим URL
+     // Parse the URL
     const parsedUrl = url.parse(req.url || '/', true);
     const path = parsedUrl.pathname || '/';
     const method = req.method || 'GET';
     
     console.log(`${method} ${path}`);
     
-    // Маршруты
+    // Routes
     if (path === '/' && method === 'GET') {
       return res.json({
         message: 'Welcome to Bank Transactions API'
       });
     }
     
-    // Маршруты для транзакций
+    // Routes for transactions
     if (path === '/transactions' && method === 'GET') {
       return await transactionsController.index({ 
         request: req, 
@@ -34,7 +33,7 @@ async function handleRequest(req: any, res: any) {
       });
     }
     
-    // Получение одной транзакции
+    // Get a single transaction
     if (path.match(/^\/transactions\/\d+$/) && method === 'GET') {
       const id = path.split('/')[2];
       req.params = { id };
@@ -45,7 +44,7 @@ async function handleRequest(req: any, res: any) {
       });
     }
     
-    // Обновление транзакции
+    // Update a transaction
     if (path.match(/^\/transactions\/\d+$/) && method === 'PUT') {
       const id = path.split('/')[2];
       req.params = { id };
@@ -56,7 +55,7 @@ async function handleRequest(req: any, res: any) {
       });
     }
     
-    // Получение всех задач
+    // Get all tasks
     if (path === '/jobs' && method === 'GET') {
       return await transactionsController.getJobs({
         request: req,
@@ -64,7 +63,7 @@ async function handleRequest(req: any, res: any) {
       });
     }
     
-    // Получение статуса конкретной задачи
+    // Get the status of a specific task
     if (path.match(/^\/jobs\/[a-z0-9]+$/) && method === 'GET') {
       const id = path.split('/')[2];
       req.params = { id };
@@ -75,7 +74,7 @@ async function handleRequest(req: any, res: any) {
       });
     }
     
-    // Если маршрут не найден
+    // If the route is not found
     return res.status(404).json({ 
       error: 'Not found' 
     });
@@ -88,13 +87,13 @@ async function handleRequest(req: any, res: any) {
   }
 }
 
-// Создаем сервер
+// Create a server
 const server = http.createServer((req, res) => {
-  // Расширяем объекты запроса и ответа
+  // Extend request and response objects
   const extendedReq = req as any;
   const extendedRes = res as any;
   
-  // Добавляем методы для response
+  // Add methods for response
   extendedRes.status = function(code: number) {
     this.statusCode = code;
     return {
@@ -122,7 +121,7 @@ const server = http.createServer((req, res) => {
     return this.status(400).json(data);
   };
   
-  // Добавляем методы для request
+  // Add methods for request
   extendedReq.input = function(name: string, defaultValue: any = null) {
     // Парсим URL для получения query params
     const parsedUrl = url.parse(this.url || '/', true);
@@ -139,7 +138,7 @@ const server = http.createServer((req, res) => {
     return result;
   };
   
-  // Обрабатываем тело запроса для POST и PUT
+  // Process the request body for POST and PUT
   if (req.method === 'POST' || req.method === 'PUT') {
     let body = '';
     
@@ -160,7 +159,7 @@ const server = http.createServer((req, res) => {
   }
 });
 
-// Запускаем сервер
+// Start the server
 server.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });

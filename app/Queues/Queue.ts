@@ -10,7 +10,7 @@ export default class Queue extends EventEmitter {
     super();
     this.name = name;
     
-    // Настройки по умолчанию для Redis
+    // Default settings for Redis
     const defaultConfig = {
       redis: {
         host: process.env.REDIS_HOST || 'localhost',
@@ -19,10 +19,10 @@ export default class Queue extends EventEmitter {
       }
     };
     
-    // Создаем очередь с переданными настройками
+    // Create a queue with the provided configuration
     this.queue = new Bull(name, { ...defaultConfig, ...redisConfig });
     
-    // Обработка событий
+    // Event handling
     this.queue.on('completed', (job, result) => {
       console.log(`Job ${job.id} completed with result:`, result);
       this.emit('completed', job, result);
@@ -40,14 +40,14 @@ export default class Queue extends EventEmitter {
   }
 
   /**
-   * Добавляет задачу в очередь
+   * Adds a job to the queue
    */
   async add(data: any, options: Bull.JobOptions = {}): Promise<Bull.Job> {
     return await this.queue.add(data, options);
   }
 
   /**
-   * Устанавливает обработчик задач
+   * Sets a job processor
    */
   process(handler: (job: Bull.Job) => Promise<any>): void {
     this.queue.process(async (job) => {
@@ -57,35 +57,35 @@ export default class Queue extends EventEmitter {
   }
 
   /**
-   * Очищает очередь
+   * Clears the queue
    */
   async clear(): Promise<void> {
     await this.queue.empty();
   }
 
   /**
-   * Получает список активных задач
+   * Gets a list of active jobs
    */
   async getActive(): Promise<Bull.Job[]> {
     return await this.queue.getActive();
   }
 
   /**
-   * Получает список задач в очереди
+   * Gets a list of waiting jobs
    */
   async getWaiting(): Promise<Bull.Job[]> {
     return await this.queue.getWaiting();
   }
 
   /**
-   * Получает список завершенных задач
+   * Gets a list of completed jobs
    */
   async getCompleted(): Promise<Bull.Job[]> {
     return await this.queue.getCompleted();
   }
 
   /**
-   * Получает список проваленных задач
+   * Gets a list of failed jobs
    */
   async getFailed(): Promise<Bull.Job[]> {
     return await this.queue.getFailed();

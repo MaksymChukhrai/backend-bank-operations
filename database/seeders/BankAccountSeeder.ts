@@ -1,4 +1,3 @@
-// database/seeders/BankAccountSeeder.ts
 import BankAccount from "../../app/Models/BankAccount.js";
 
 const bankAccountsSeeder = {

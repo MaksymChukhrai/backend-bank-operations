@@ -1,14 +1,13 @@
-// start/routes.ts
 import router from '@adonisjs/core/services/router';
 
-// Маршруты для корня
+// Root routes
 router.get('/', async ({ response }: { response: any }) => {
   return response.json({
     message: 'Welcome to Bank Transactions API'
   });
 });
 
-// Группа маршрутов для транзакций
+// Transaction routes group
 router.group(() => {
   router.get('/', 'TransactionsController.index');
   router.get('/:id', 'TransactionsController.show');

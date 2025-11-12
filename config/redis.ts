@@ -1,4 +1,3 @@
-// config/redis.ts
 const redisConfig = {
   connection: process.env.REDIS_CONNECTION || "local",
 

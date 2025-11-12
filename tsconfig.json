@@ -1,4 +1,3 @@
-
 {
   "compilerOptions": {
     "target": "ES2022",
@@ -17,6 +16,7 @@
       "#models/*": ["./app/Models/*"],
       "#services/*": ["./app/Services/*"],
       "#validators/*": ["./app/Validators/*"]
-    }
+    },
+    "forceConsistentCasingInFileNames": true
   }
 }
